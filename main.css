@@ -1,0 +1,140 @@
+
+
+
+body {
+    animation:linear 4ms;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgb(228, 171, 124);
+    background-image:url(imgs/edge-yellow-wall-pencils-paper-rat-clips-clocks-lie-chaotically-beautifully.jpg);
+    background-size: 1530px 720px;
+}
+
+
+
+.container {
+    width: 300px;
+    background-color: #fff3eb;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4 px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+header {
+    background-color: rgb(255, 79, 35);
+    padding: 20px;
+    border-bottom: 4px solid #ffffffd7;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    text-align: center;
+    box-shadow: 0 2px rgba(0, 0, 0, 0.1);
+}
+
+input, button {
+    width: calc(100% - 20px);
+    margin: 10px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+body img {
+    size:  0;
+}
+
+#tarefa {
+    transition: transform 150ms linear;
+}
+
+button {
+    cursor:pointer;
+    background-color: #00b7ff;
+    color: #ffffff;
+    border: none;
+    transition: transform 150ms linear, opacity 200ms ease-in-out;
+;}
+#tarefa-btn:hover {
+    transform: scale(1.06);
+    background-color: #5fb399;
+    opacity: 0.5;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+li {
+    width: calc(100% - 20%);
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+li span {
+    cursor: pointer;
+    color: #f44336;
+    font-weight: bold;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+
+
+
+
+@media (min-width: 768px) {
+    .container {
+        width: 400px;
+    }
+    
+    header {
+        font-size: 28px;
+    }
+    
+    input, button {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .container {
+        width: 90%;
+    }
+
+    header {
+        font-size: 20px;
+        padding: 15px;
+    }
+
+    input, button {
+        margin: 8px;
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    li {
+        width: calc(100% - 16px);
+        padding: 8px;
+    }
+}
