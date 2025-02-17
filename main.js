@@ -1,6 +1,18 @@
 $(document).ready(function () {
   carregarTarefas();
 
+  $("#tarefaInput").on("input", function () {
+    $(this).val(
+      $(this)
+        .val()
+        .replace(/[^0-9,]/g, "")
+    );
+
+    $(this).val($(this).val().replace(/,{2,}/g, ","));
+
+    $(this).val($(this).val().replace(/^,/, ""));
+  });
+
   $("#peopleSelect optgroup").hide();
 
   $("#prioritySelect").on("change", function () {

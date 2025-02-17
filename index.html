@@ -37,7 +37,9 @@
         <input
           type="text"
           id="tarefaInput"
-          placeholder="Adiocione asiim: 0, 0, 0 ,0"
+          placeholder="Apenas números e vírgulas: 1,2,3"
+          pattern="[0-9,\s]*"
+          onkeypress="return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 44"
         />
         <button id="tarefa-btn">Adicionar</button>
       </div>
