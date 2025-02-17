@@ -1,23 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="main.css" />
     <title>Lista de Tarefas</title>
-
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header>Lista de Tarefas</header>
-        <div class="lista">
-            <input type="text" id="tarefaInput" placeholder="Adicione uma nova tarefa">
-            <button id="tarefa-btn">Adicionar</button>
-        </div>
-        <ul id="tarefa-List"></ul>
+      <header>Lista de Tarefas</header>
+      <div class="lista">
+        <select id="prioritySelect" class="prefix-select">
+          <option value="">Selecione a prioridade</option>
+          <option value="URGENTE:">Montana</option>
+          <option value="IMPORTANTE:">Santana</option>
+          <option value="NORMAL:">Vitória</option>
+        </select>
+
+        <select id="peopleSelect" class="prefix-select">
+          <option value="">Selecione uma pessoa</option>
+          <optgroup label="Montana" class="group-urgente">
+            <option value="FABIO:">Fabio</option>
+            <option value="ANTONIO:">Antonio</option>
+          </optgroup>
+          <optgroup label="Importante" class="group-importante">
+            <option value="JARDEL:">Jardel</option>
+            <option value="ARLLOS:">Arllos</option>
+            <option value="CASTRO:">Castro</option>
+          </optgroup>
+          <optgroup label="Normal" class="group-normal">
+            <option value="ALMEIDAS:">Almeidas</option>
+            <option value="JOÃO VITOR:">João Vitor</option>
+          </optgroup>
+        </select>
+
+        <input
+          type="number"
+          id="tarefaInput"
+          placeholder="Adiocione asiim: 0, 0, 0 ,0"
+        />
+        <button id="tarefa-btn">Adicionar</button>
+      </div>
+      <ul id="tarefa-List">
+        <li>
+          <div class="task-content">
+            <span class="task-text">Task description</span>
+            <span class="delete-btn">×</span>
+          </div>
+          <div class="task-date"></div>
+        </li>
+      </ul>
+      <footer>
+        <button id="clearAll">Limpar Tudo</button>
+        <button id="undoButton" style="display: none">
+          Desfazer última exclusão
+        </button>
+      </footer>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="main.js"></script>
-</body>
-
+  </body>
 </html>

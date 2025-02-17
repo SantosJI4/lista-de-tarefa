@@ -1,140 +1,300 @@
-
-
-
 body {
-    animation:linear 4ms;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: rgb(228, 171, 124);
-    background-image:url(imgs/edge-yellow-wall-pencils-paper-rat-clips-clocks-lie-chaotically-beautifully.jpg);
-    background-size: 1530px 720px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 20px 0;
+  min-height: 100vh;
+  background-color: rgb(228, 171, 124);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-
-
 
 .container {
-    width: 300px;
-    background-color: #fff3eb;
-    border: 1px solid #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4 px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff3eb;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 0 auto;
 }
-
 header {
-    background-color: rgb(255, 79, 35);
-    padding: 20px;
-    border-bottom: 4px solid #ffffffd7;
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffffff;
-    text-align: center;
-    box-shadow: 0 2px rgba(0, 0, 0, 0.1);
+  background-color: rgb(255, 79, 35);
+  padding: 20px;
+  border-bottom: 4px solid #ffffffd7;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+  box-shadow: 0 2px rgba(0, 0, 0, 0.1);
 }
 
-input, button {
-    width: calc(100% - 20px);
-    margin: 10px;
-    font-weight: bold;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
+input,
+button {
+  width: calc(100% - 20px);
+  margin: 10px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
 body img {
-    size:  0;
+  size: 0;
 }
 
 #tarefa {
-    transition: transform 150ms linear;
+  transition: transform 150ms linear;
 }
 
 button {
-    cursor:pointer;
-    background-color: #00b7ff;
-    color: #ffffff;
-    border: none;
-    transition: transform 150ms linear, opacity 200ms ease-in-out;
-;}
+  cursor: pointer;
+  background-color: #00b7ff;
+  color: #ffffff;
+  border: none;
+  transition: transform 150ms linear, opacity 200ms ease-in-out;
+}
 #tarefa-btn:hover {
-    transform: scale(1.06);
-    background-color: #5fb399;
-    opacity: 0.5;
+  transform: scale(1.06);
+  background-color: #5fb399;
+  opacity: 0.5;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 10px 0;
+#tarefa-List {
+  max-height: calc(80vh - 200px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 10px;
 }
 
 li {
-    width: calc(100% - 20%);
-    margin: 10px auto;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: calc(100% - 20%);
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.task-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-date {
+  width: 100%;
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.prefix-select {
+  width: calc(100% - 20px);
+  margin: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  background-color: #fff;
+  font-weight: bold;
+}
+
+.task-prefix {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.prefix-urgente {
+  color: #ff0000;
+}
+
+.prefix-importante {
+  color: #00ff22;
+}
+
+.prefix-normal {
+  color: #000000;
+}
+
+#clearAll {
+  background-color: #ff4f23;
+  margin-bottom: 10px;
+}
+
+#clearAll:hover {
+  background-color: #ff3300;
+  transform: scale(1.06);
+  opacity: 0.9;
+}
+
+#undoButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 10px auto;
+  border-radius: 4px;
+  cursor: pointer;
+  display: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#undoButton:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.prefix-select optgroup {
+  font-weight: bold;
+  font-style: normal;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.prefix-select option {
+  font-weight: normal;
+  padding: 5px;
+}
+
+.prefix-select optgroup option {
+  padding-left: 15px;
+}
+
+input,
+button,
+.prefix-select {
+  width: calc(100% - 20px);
+  margin: 10px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+}
+.prefix-fabio {
+  color: #4caf50;
+}
+
+.prefix-antonio {
+  color: #2196f3;
+}
+
+.prefix-jardel {
+  color: #9c27b0;
+}
+
+.prefix-arllos {
+  color: #ff5722;
+}
+
+.prefix-almeidas {
+  color: #795548;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+li {
+  width: calc(100% - 20%);
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 li span {
-    cursor: pointer;
-    color: #f44336;
-    font-weight: bold;
+  cursor: pointer;
+  color: #f44336;
+  font-weight: bold;
 }
 
 .completed {
-    text-decoration: line-through;
-    color: #888;
+  text-decoration: line-through;
+  color: #888;
 }
 
+#tarefa-List {
+  max-height: calc(80vh - 200px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 10px;
+}
+.prefix-select optgroup {
+  font-weight: bold;
+  color: #333;
+}
 
+.group-urgente {
+  background-color: #ffebee;
+}
 
+.group-importante {
+  background-color: #e8f5e9;
+}
 
+.group-normal {
+  background-color: #e3f2fd;
+}
 
-@media (min-width: 768px) {
-    .container {
-        width: 400px;
-    }
-    
-    header {
-        font-size: 28px;
-    }
-    
-    input, button {
-        font-size: 16px;
-    }
+.prefix-select optgroup option {
+  padding-left: 15px;
+  background-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  #tarefa-List {
+    max-height: calc(100vh - 250px);
+  }
 }
 
 @media (max-width: 400px) {
-    .container {
-        width: 90%;
-    }
+  body {
+    align-items: flex-start;
+    padding: 10px 0;
+  }
 
-    header {
-        font-size: 20px;
-        padding: 15px;
-    }
+  .container {
+    width: 90%;
+    margin: 10px auto;
+  }
 
-    input, button {
-        margin: 8px;
-        padding: 8px;
-        font-size: 14px;
-    }
+  #tarefa-List {
+    max-height: 70vh;
+  }
 
-    li {
-        width: calc(100% - 16px);
-        padding: 8px;
-    }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
 }
