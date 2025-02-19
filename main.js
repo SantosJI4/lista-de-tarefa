@@ -1,174 +1,231 @@
 $(document).ready(function () {
   carregarTarefas();
+  setupEventListeners();
 
-  $("#tarefaInput").on("input", function () {
-    $(this).val(
-      $(this)
-        .val()
-        .replace(/[^0-9,]/g, "")
-    );
+  function setupEventListeners() {
+    // Menu handlers
+    $("#menuButton").on("click", () => $("#popupMenu").fadeIn(200));
+    $("#closeMenu").on("click", () => $("#popupMenu").fadeOut(200));
+    $("#popupMenu").on("click", closePopupOnOutsideClick);
 
-    $(this).val($(this).val().replace(/,{2,}/g, ","));
+    // Task handlers
+    $("#tarefa-btn").on("click", handleAddTask);
+    $(document).on("click", ".delete-btn", handleDeleteTask);
+    $("#clearAllBtn, #clearAll").on("click", handleClearAllTasks);
 
-    $(this).val($(this).val().replace(/^,/, ""));
-  });
+    // Filter and selection handlers
+    $(".filter-btn").on("click", handleFilterTasks);
+    $("#prioritySelect").on("change", handlePrioritySelection);
+  }
 
-  $("#peopleSelect optgroup").hide();
+  function handleAddTask() {
+    const tarefaText = $("#tarefaInput").val().trim();
+    const priority = $("#prioritySelect").val();
+    const person = $("#peopleSelect").val();
 
-  $("#prioritySelect").on("change", function () {
-    const selectedPriority = $(this).val().replace(":", "").toLowerCase();
-
-    $("#peopleSelect optgroup").hide();
-
-    if (selectedPriority) {
-      $(`#peopleSelect .group-${selectedPriority}`).show();
+    if (tarefaText && priority) {
+      addTaskToGroup(tarefaText, priority, person);
+      clearInputs();
     }
+  }
 
-    $("#peopleSelect").val("");
-  });
+  function addTaskToGroup(text, priority, person) {
+    const currentDate = formatCurrentDate();
+    const dateGroupId = `date-${currentDate.replace(/\//g, "-")}`;
+    let $dateGroup = getOrCreateDateGroup(dateGroupId, currentDate);
 
-  let lastDeletedTask = null;
+    const taskHTML = createTaskHTML(text, priority, person);
+    $dateGroup.find(".tasks-for-date").prepend(taskHTML);
+    salvarTarefas();
+  }
 
-  $("header").after(`
-    <button id="undoButton" style="display: none;">Desfazer última exclusão</button>
-  `);
-
-  $(document).on("click", ".delete-btn", function (e) {
-    e.stopPropagation();
-    const $taskItem = $(this).closest("li");
-
-    lastDeletedTask = {
-      html: $taskItem.prop("outerHTML"),
-      position: $taskItem.index(),
-    };
-
-    $("#undoButton").fadeIn().css("display", "block");
-
-    setTimeout(() => {
-      $("#undoButton").fadeOut();
-    }, 5000);
-
-    $taskItem.fadeOut(500, function () {
-      $(this).remove();
-      salvarTarefas();
+  function formatCurrentDate() {
+    return new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
     });
-  });
+  }
 
-  $("#undoButton").on("click", function () {
-    if (lastDeletedTask) {
-      const $taskList = $("#tarefa-List");
+  function getOrCreateDateGroup(dateGroupId, displayDate) {
+    let $dateGroup = $(`#${dateGroupId}`);
 
-      if (lastDeletedTask.position === 0) {
-        $taskList.prepend(lastDeletedTask.html);
-      } else {
-        $taskList
-          .children()
-          .eq(lastDeletedTask.position - 1)
-          .after(lastDeletedTask.html);
-      }
-
-      $taskList.find("li").last().hide().fadeIn();
-
-      lastDeletedTask = null;
-      $(this).fadeOut();
-
-      salvarTarefas();
+    if ($dateGroup.length === 0) {
+      $("#tarefa-List").prepend(`
+          <div class="date-group" id="${dateGroupId}">
+            <h3 class="date-header">${displayDate}</h3>
+            <ul class="tasks-for-date"></ul>
+          </div>
+        `);
+      $dateGroup = $(`#${dateGroupId}`);
     }
-  });
 
-  $("#clearAll").on("click", function () {
-    if (
-      confirm(
-        "Tem certeza que deseja limpar todas as tarefas? você não poderá desfazer essa ação."
-      )
-    ) {
-      $("#tarefa-List").empty();
-      localStorage.removeItem("tarefas");
-    }
-  });
+    return $dateGroup;
+  }
 
-  $("#tarefa-btn").on("click", function () {
-    let tarefaText = $("#tarefaInput").val().trim();
-    const selectedPriority = $("#prioritySelect").val();
-    const selectedPerson = $("#peopleSelect").val();
-    if (tarefaText.length > 0) {
-      let prefix = "";
-      switch (selectedPriority) {
-        case "URGENTE:":
-          tarefaText = tarefaText
-            .split(",")
-            .map((item) => "ATM " + item.trim())
-            .join(", ");
-          prefix += `<span class="task-prefix prefix-urgente">${selectedPriority}</span>`;
-          break;
-        case "IMPORTANTE:":
-          tarefaText = tarefaText
-            .split(",")
-            .map((item) => "ATS " + item.trim())
-            .join(", ");
-          prefix += `<span class="task-prefix prefix-importante">${selectedPriority}</span>`;
-          break;
-        case "NORMAL:":
-          tarefaText = tarefaText
-            .split(",")
-            .map((item) => "ATV " + item.trim())
-            .join(", ");
-          prefix += `<span class="task-prefix prefix-normal">${selectedPriority}</span>`;
-          break;
-      }
+  function createTaskHTML(text, priority, person) {
+    const prefix = getPrefixByPriority(priority);
+    const formattedText = formatTaskText(text, prefix);
+    const priorityClass = `prefix-${priority.toLowerCase().replace(":", "")}`;
+    const personClass = person
+      ? `prefix-${person.toLowerCase().replace(":", "")}`
+      : "";
 
-      if (selectedPerson) {
-        const personClass = `prefix-${selectedPerson
-          .toLowerCase()
-          .replace(":", "")}`;
-        prefix += `<span class="task-prefix ${personClass}">${selectedPerson}</span>`;
-      }
+    return `
+        <li>
+          <div class="task-content">
+            <span class="task-text">
+              <span class="task-prefix ${priorityClass}">${priority}</span>
+              ${
+                person
+                  ? `<span class="task-prefix ${personClass}">${person}</span>`
+                  : ""
+              }
+              ${formattedText}
+            </span>
+            <span class="delete-btn">&times;</span>
+          </div>
+        </li>`;
+  }
 
-      const currentDate = new Date().toLocaleDateString("pt-BR", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
+  function formatTaskText(text, prefix) {
+    return text
+      .split(",")
+      .map((item) => `${prefix} ${item.trim()}`)
+      .join(", ");
+  }
 
-      const taskHTML = `
-          <li>
-            <div class="task-content">
-              <span class="task-text">${prefix}${tarefaText}</span>
-              <span class="delete-btn">&times;</span>
-            </div>
-            <div class="task-date">Criado em: ${currentDate}</div>
-          </li>`;
-
-      $("#tarefa-List").append(taskHTML);
-
-      $("#tarefaInput").val("");
-      $("#prioritySelect").val("");
-      $("#peopleSelect").val("");
-
-      salvarTarefas();
-    }
-  });
-
-  $(document).on("click", "li", function (e) {
-    if (!$(e.target).hasClass("delete-btn")) {
-      $(this).toggleClass("completed");
-      salvarTarefas();
-    }
-  });
-
-  $(document).on("click", ".delete-btn", function (e) {
+  function handleDeleteTask(e) {
     e.stopPropagation();
     $(this)
       .closest("li")
-      .fadeOut(500, function () {
+      .fadeOut(300, function () {
         $(this).remove();
+        cleanEmptyDateGroups();
         salvarTarefas();
       });
-  });
+  }
+
+  function handleClearAllTasks() {
+    if (confirm("Tem certeza que deseja limpar todas as tarefas?")) {
+      $("#tarefa-List").empty();
+      localStorage.removeItem("tarefas");
+      $("#popupMenu").fadeOut(200);
+    }
+  }
+
+  function handleFilterTasks() {
+    const filter = $(this).data("filter");
+    $(".filter-btn").removeClass("active");
+    $(this).addClass("active");
+
+    if (filter === "all") {
+      $(".date-group").show();
+      $(".date-group li").show();
+      return;
+    }
+
+    $(".date-group").each(function () {
+      const $group = $(this);
+      let hasVisibleTasks = false;
+
+      $group.find("li").each(function () {
+        const $task = $(this);
+        const taskText = $task.find(".task-text").text().toLowerCase();
+        let shouldShow = false;
+
+        switch (filter) {
+          case "urgente":
+            shouldShow =
+              taskText.includes("atm") || taskText.includes("urgente");
+            break;
+          case "importante":
+            shouldShow =
+              taskText.includes("ats") || taskText.includes("importante");
+            break;
+          case "normal":
+            shouldShow =
+              taskText.includes("atv") || taskText.includes("normal");
+            break;
+          case "b-area-santana":
+            shouldShow =
+              taskText.includes("b. area santana") ||
+              taskText.includes("castro");
+            break;
+          case "b-area-vitoria":
+            shouldShow =
+              taskText.includes("b. area vitoria") ||
+              taskText.includes("joão vitor");
+            break;
+        }
+
+        if (shouldShow) {
+          hasVisibleTasks = true;
+          $task.show();
+        } else {
+          $task.hide();
+        }
+      });
+
+      if (hasVisibleTasks) {
+        $group.show();
+      } else {
+        $group.hide();
+      }
+    });
+  }
+
+  function handlePrioritySelection() {
+    const selectedPriority = $(this).val();
+    $("#peopleSelect optgroup").hide();
+
+    const groupMap = {
+      "Montana:": ".group-Montana",
+      "Santana:": ".group-Santana",
+      "Vitória:": ".group-Vitória",
+      "B. AREA SANTANA:": ".group-b-area-santana",
+      "B. AREA VITORIA:": ".group-b-area-vitoria",
+    };
+
+    if (groupMap[selectedPriority]) {
+      $(groupMap[selectedPriority]).show();
+    }
+
+    $("#peopleSelect").val("");
+  }
+
+  function closePopupOnOutsideClick(e) {
+    if (e.target === this) {
+      $(this).fadeOut(200);
+    }
+  }
+
+  function cleanEmptyDateGroups() {
+    $(".date-group").each(function () {
+      if ($(this).find("li").length === 0) {
+        $(this).remove();
+      }
+    });
+  }
+
+  function getPrefixByPriority(priority) {
+    const prefixMap = {
+      "Montana:": "ATM",
+      "Santana:": "ATS",
+      "Vitória:": "ATV",
+      "B. AREA SANTANA:": "ASA",
+      "B. AREA VITORIA:": "AVA",
+    };
+    return prefixMap[priority] || "";
+  }
+
+  function clearInputs() {
+    $("#tarefaInput, #prioritySelect, #peopleSelect").val("");
+    $("#peopleSelect optgroup").hide();
+  }
 
   function salvarTarefas() {
-    const tarefas = $("#tarefa-List").html();
-    localStorage.setItem("tarefas", tarefas);
+    localStorage.setItem("tarefas", $("#tarefa-List").html());
   }
 
   function carregarTarefas() {

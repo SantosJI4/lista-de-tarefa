@@ -8,55 +8,71 @@
   </head>
   <body>
     <div class="container">
-      <header>Lista de Tarefas</header>
+      <header>
+        Lista de Tarefas
+        <button id="menuButton" class="menu-button">☰</button>
+      </header>
+      <div id="popupMenu" class="popup-menu">
+        <div class="popup-content">
+          <h3>Filtrar por:</h3>
+          <div class="filter-options">
+            <button class="filter-btn" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="urgente">Montana</button>
+            <button class="filter-btn" data-filter="importante">Santana</button>
+            <button class="filter-btn" data-filter="normal">Vitória</button>
+            <button class="filter-btn" data-filter="b-area-santana">
+              B. Area Santana
+            </button>
+            <button class="filter-btn" data-filter="b-area-vitoria">
+              B. Area Vitória
+            </button>
+          </div>
+          <hr />
+          <button id="clearAllBtn" class="menu-action-btn">Limpar Todas</button>
+          <button id="closeMenu" class="menu-action-btn">Fechar</button>
+        </div>
+      </div>
       <div class="lista">
         <select id="prioritySelect" class="prefix-select">
           <option value="">Selecione a prioridade</option>
-          <option value="URGENTE:">Montana</option>
-          <option value="IMPORTANTE:">Santana</option>
-          <option value="NORMAL:">Vitória</option>
+          <option value="Montana:">Montana</option>
+          <option value="Santana:">Santana</option>
+          <option value="Vitória:">Vitória</option>
+          <option value="B. AREA SANTANA:">B. Area Santana</option>
+          <option value="B. AREA VITORIA:">B. Area Vitória</option>
         </select>
 
         <select id="peopleSelect" class="prefix-select">
           <option value="">Selecione uma pessoa</option>
-          <optgroup label="Montana" class="group-urgente">
+          <optgroup label="Montana" class="group-Montana">
             <option value="FABIO:">Fabio</option>
             <option value="ANTONIO:">Antonio</option>
           </optgroup>
-          <optgroup label="Importante" class="group-importante">
+          <optgroup label="Santana" class="group-Santana">
             <option value="JARDEL:">Jardel</option>
             <option value="ARLLOS:">Arllos</option>
+          </optgroup>
+          <optgroup label="Vitória" class="group-Vitória">
+            <option value="ALMEIDAS:">Almeidas</option>
+          </optgroup>
+          <optgroup label="B. Area Santana" class="group-b-area-santana">
             <option value="CASTRO:">Castro</option>
           </optgroup>
-          <optgroup label="Normal" class="group-normal">
-            <option value="ALMEIDAS:">Almeidas</option>
+          <optgroup label="B. Area Vitória" class="group-b-area-vitoria">
             <option value="JOÃO VITOR:">João Vitor</option>
           </optgroup>
         </select>
-
         <input
           type="text"
           id="tarefaInput"
           placeholder="Apenas números e vírgulas: 1,2,3"
           pattern="[0-9,\s]*"
-          onkeypress="return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 44"
         />
         <button id="tarefa-btn">Adicionar</button>
       </div>
-      <ul id="tarefa-List">
-        <li>
-          <div class="task-content">
-            <span class="task-text">Task description</span>
-            <span class="delete-btn">×</span>
-          </div>
-          <div class="task-date"></div>
-        </li>
-      </ul>
+      <ul id="tarefa-List"></ul>
       <footer>
         <button id="clearAll">Limpar Tudo</button>
-        <button id="undoButton" style="display: none">
-          Desfazer última exclusão
-        </button>
       </footer>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
