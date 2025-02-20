@@ -11,11 +11,18 @@ $(document).ready(function () {
     // Task handlers
     $("#tarefa-btn").on("click", handleAddTask);
     $(document).on("click", ".delete-btn", handleDeleteTask);
+    $(document).on("click", ".complete-btn", handleCompleteTask);
+    $(document).on("click", ".confirm-btn", handleConfirmTask);
+    $(document).on("click", ".cancel-btn", handleCancelTask);
     $("#clearAllBtn, #clearAll").on("click", handleClearAllTasks);
+    $("#collectByDateBtn").on("click", handleCollectByDate);
 
     // Filter and selection handlers
     $(".filter-btn").on("click", handleFilterTasks);
     $("#prioritySelect").on("change", handlePrioritySelection);
+
+    // Input validation handler
+    $("#tarefaInput").on("input", validateInput);
   }
 
   function handleAddTask() {
@@ -52,11 +59,11 @@ $(document).ready(function () {
 
     if ($dateGroup.length === 0) {
       $("#tarefa-List").prepend(`
-          <div class="date-group" id="${dateGroupId}">
-            <h3 class="date-header">${displayDate}</h3>
-            <ul class="tasks-for-date"></ul>
-          </div>
-        `);
+        <div class="date-group" id="${dateGroupId}">
+          <h3 class="date-header">${displayDate}</h3>
+          <ul class="tasks-for-date"></ul>
+        </div>
+      `);
       $dateGroup = $(`#${dateGroupId}`);
     }
 
@@ -72,20 +79,25 @@ $(document).ready(function () {
       : "";
 
     return `
-        <li>
-          <div class="task-content">
-            <span class="task-text">
-              <span class="task-prefix ${priorityClass}">${priority}</span>
-              ${
-                person
-                  ? `<span class="task-prefix ${personClass}">${person}</span>`
-                  : ""
-              }
-              ${formattedText}
-            </span>
-            <span class="delete-btn">&times;</span>
-          </div>
-        </li>`;
+      <li>
+        <div class="task-content">
+          <span class="task-text">
+            <span class="task-prefix ${priorityClass}">${priority}</span>
+            ${
+              person
+                ? `<span class="task-prefix ${personClass}">${person}</span>`
+                : ""
+            }
+            ${formattedText}
+          </span>
+          <button class="complete-btn">Passei para ficha</button>
+          <span class="delete-btn"><i class="bi bi-trash-fill"></i></span>
+        </div>
+        <div class="confirm-buttons" style="display: none;">
+          <button class="confirm-btn">Confirmar</button>
+          <button class="cancel-btn">Cancelar</button>
+        </div>
+      </li>`;
   }
 
   function formatTaskText(text, prefix) {
@@ -104,6 +116,25 @@ $(document).ready(function () {
         cleanEmptyDateGroups();
         salvarTarefas();
       });
+  }
+
+  function handleCompleteTask() {
+    const $task = $(this).closest("li");
+    $task.find(".confirm-buttons").show();
+    $(this).hide();
+  }
+
+  function handleConfirmTask() {
+    const $task = $(this).closest("li");
+    $task.addClass("completed");
+    $task.find(".confirm-buttons").hide();
+    salvarTarefas();
+  }
+
+  function handleCancelTask() {
+    const $task = $(this).closest("li");
+    $task.find(".confirm-buttons").hide();
+    $task.find(".complete-btn").show();
   }
 
   function handleClearAllTasks() {
@@ -213,8 +244,8 @@ $(document).ready(function () {
       "Montana:": "ATM",
       "Santana:": "ATS",
       "Vitória:": "ATV",
-      "B. AREA SANTANA:": "ASA",
-      "B. AREA VITORIA:": "AVA",
+      "B. AREA SANTANA:": "B. AREA SANTANA",
+      "B. AREA VITORIA:": "B. AREA VITORIA",
     };
     return prefixMap[priority] || "";
   }
@@ -233,5 +264,32 @@ $(document).ready(function () {
     if (tarefas) {
       $("#tarefa-List").html(tarefas);
     }
+  }
+
+  function validateInput() {
+    const input = $(this).val();
+    const validInput = input.replace(/[^0-9,]/g, "");
+    if (input !== validInput) {
+      $(this).val(validInput);
+    }
+  }
+
+  function handleCollectByDate() {
+    const tasksByDate = {};
+
+    $(".date-group").each(function () {
+      const date = $(this).find(".date-header").text();
+      const tasks = $(this)
+        .find("li")
+        .map(function () {
+          return $(this).find(".task-text").text();
+        })
+        .get();
+
+      tasksByDate[date] = tasks;
+    });
+
+    console.log(tasksByDate);
+    alert(JSON.stringify(tasksByDate, null, 2));
   }
 });
