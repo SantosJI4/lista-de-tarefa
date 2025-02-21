@@ -1,5 +1,3 @@
-----html
-<!-- filepath: /c:/Users/Maurício Santana/Documents/listadetareafa/ficha_de_epis.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
   <head>
@@ -100,7 +98,8 @@
         margin-right: 10px;
       }
       .confirm-btn,
-      .delete-btn {
+      .delete-btn,
+      .edit-btn {
         margin-top: 10px;
         padding: 10px 20px;
         background: #007bff;
@@ -110,7 +109,8 @@
         cursor: pointer;
       }
       .confirm-btn:hover,
-      .delete-btn:hover {
+      .delete-btn:hover,
+      .edit-btn:hover {
         background: #0056b3;
       }
       .delete-btn {
@@ -168,11 +168,54 @@
       .delete-epi-btn:hover {
         background: #c82333;
       }
+      .epi-status-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        align-items: center;
+      }
+      .status-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .status-em-uso {
+        background-color: #28a745;
+      }
+      .status-lavanderia {
+        background-color: #ffc107;
+        color: #000;
+      }
+      .epi-status {
+        font-weight: bold;
+      }
+      .signature-preview-container {
+        margin-top: 20px;
+      }
+      .signature-preview-container h3 {
+        margin-bottom: 10px;
+      }
+      #signaturePreview {
+        max-width: 300px;
+        display: none; /* só aparece quando a imagem é carregada */
+      }
+      #signatureTextOutput {
+        margin-top: 10px;
+        width: 100%;
+        min-height: 50px;
+        padding: 10px;
+        resize: vertical;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <header>Ficha de EPIs</header>
+
+      <!-- Contêineres para cada pessoa/base -->
       <div class="person-group" data-person="Fabio">
         <h2>Fabio</h2>
         <div class="team-list"></div>
@@ -201,14 +244,18 @@
         <h2>João Vitor</h2>
         <div class="team-list"></div>
       </div>
+
+      <!-- Formulário para adicionar novo funcionário -->
       <div class="add-employee-form">
         <h3>Adicionar Novo Funcionário</h3>
+
         <label for="employeeName">Nome do Funcionário</label>
         <input
           type="text"
           id="employeeName"
           placeholder="Nome do Funcionário"
         />
+
         <label for="person">Chefe de Base</label>
         <select id="person">
           <option value="">Selecione uma pessoa</option>
@@ -230,6 +277,11 @@
             <option value="João Vitor">João Vitor</option>
           </optgroup>
         </select>
+
+        <!-- NOVO CAMPO: Número do CA -->
+        <label for="numeroCA">Número do CA</label>
+        <input type="text" id="numeroCA" placeholder="Número do CA" />
+
         <div id="epiFields">
           <div class="epi-field">
             <label for="epi1">EPI 1</label>
@@ -247,12 +299,62 @@
           </div>
         </div>
         <button id="addEpiBtn" class="add-epi-btn">Adicionar EPI</button>
+
+        <!-- Campo para carregar imagem de assinatura -->
+        <label for="signatureFile">Assinatura (imagem)</label>
+        <input type="file" id="signatureFile" accept="image/*" />
+
         <button id="addEmployeeBtn">Adicionar Funcionário</button>
       </div>
+
+      <!-- Exibição ao final da ficha (imagem e OCR) -->
+      <div class="signature-preview-container">
+        <h3>Assinatura do Funcionário</h3>
+        <img id="signaturePreview" alt="Assinatura" />
+        <textarea
+          id="signatureTextOutput"
+          placeholder="Texto reconhecido da assinatura pelo OCR"
+        ></textarea>
+      </div>
     </div>
+
+    <!-- Tesseract.js -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const epiFields = document.getElementById("epiFields");
+        const signatureFile = document.getElementById("signatureFile");
+        const signaturePreview = document.getElementById("signaturePreview");
+        const signatureTextOutput = document.getElementById(
+          "signatureTextOutput"
+        );
+
+        // Ao selecionar a imagem, carrega em base64, exibe e tenta extrair texto via OCR
+        signatureFile.addEventListener("change", async function () {
+          const file = this.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+              // Exibe a imagem
+              signaturePreview.src = e.target.result;
+              signaturePreview.style.display = "block";
+
+              // Tenta extrair texto da assinatura
+              try {
+                const result = await Tesseract.recognize(
+                  e.target.result,
+                  "eng"
+                );
+                signatureTextOutput.value = result.data.text.trim();
+              } catch (err) {
+                signatureTextOutput.value =
+                  "Não foi possível reconhecer texto na assinatura.";
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        });
 
         function loadEmployees() {
           const employees = JSON.parse(localStorage.getItem("employees")) || [];
@@ -265,7 +367,7 @@
           localStorage.setItem("employees", JSON.stringify(employees));
         }
 
-        // Funções para salvar e carregar as posições marcadas
+        // Salva posições marcadas no grid
         function saveMarkedPositions(employeeName, epiIndex, position) {
           const markedPositions =
             JSON.parse(localStorage.getItem("markedPositions")) || {};
@@ -282,12 +384,44 @@
           );
         }
 
+        // Carrega posições marcadas do registro
         function loadMarkedPositions(employee) {
           const markedPositions =
             JSON.parse(localStorage.getItem("markedPositions")) || {};
           return markedPositions[employee.name] || {};
         }
 
+        // Função para editar: abre prompts simples (exemplo)
+        function editEmployee(employee, containerElement) {
+          const newName = prompt("Novo nome do funcionário:", employee.name);
+          if (!newName) return;
+          const newPerson = prompt("Novo chefe de base:", employee.person);
+          if (!newPerson) return;
+          const newCa = prompt("Novo número do CA:", employee.numeroCA || "");
+          if (!newCa) return;
+
+          // Atualiza os dados
+          const employees = JSON.parse(localStorage.getItem("employees")) || [];
+          employees.forEach((emp) => {
+            if (emp.name === employee.name) {
+              emp.name = newName;
+              emp.person = newPerson;
+              emp.numeroCA = newCa;
+            }
+          });
+          saveEmployees(employees);
+
+          // Remove o item atual e recria com os dados novos
+          containerElement.remove();
+          addEmployeeToDOM({
+            name: newName,
+            person: newPerson,
+            numeroCA: newCa,
+            epis: employee.epis,
+          });
+        }
+
+        // Renderiza funcionário na DOM
         function addEmployeeToDOM(employee) {
           const personGroup = document.querySelector(
             `.person-group[data-person="${employee.person}"] .team-list`
@@ -299,8 +433,12 @@
           const newEmployee = document.createElement("div");
           newEmployee.classList.add("employee-item");
           newEmployee.setAttribute("data-employee", employee.name);
+
           newEmployee.innerHTML = `
             <h3>${employee.name}</h3>
+            <p class="employee-ca">Número do CA: ${employee.numeroCA || ""}</p>
+
+            <!-- Lista simples de EPIs -->
             <ul>
               ${employee.epis
                 .map(
@@ -311,6 +449,8 @@
                 )
                 .join("")}
             </ul>
+
+            <!-- Blocos detalhados de EPI + Status + Questionário -->
             ${employee.epis
               .map(
                 (epi, index) => `
@@ -318,6 +458,15 @@
                     <h4>EPI ${index + 1}: ${epi.number} (Tamanho: ${
                   epi.size
                 })</h4>
+
+                    <!-- Botões de Status do EPI -->
+                    <div class="epi-status-container">
+                      <button class="status-btn status-em-uso" data-status="emUso">Em Uso</button>
+                      <button class="status-btn status-lavanderia" data-status="lavanderia">Na Lavanderia</button>
+                      <span class="epi-status">Status: Disponível</span>
+                    </div>
+
+                    <!-- Grid de marcações -->
                     <div class="grid-container">
                       ${Array.from({ length: 60 }, (_, i) => {
                         const isMarked = markedPositions[index]?.includes(i);
@@ -327,6 +476,8 @@
                           </div>`;
                       }).join("")}
                     </div>
+
+                    <!-- Questionário -->
                     <div class="questionnaire">
                       <h3>Questionário</h3>
                       <label>
@@ -341,11 +492,14 @@
                 `
               )
               .join("")}
+
+            <!-- Botões para apagar e editar -->
             <button class="delete-btn">Apagar</button>
+            <button class="edit-btn">Editar</button>
           `;
           personGroup.appendChild(newEmployee);
 
-          // Evento de clique do botão Confirmar
+          // CONFIRMAR (marcação de posição no grid)
           newEmployee
             .querySelectorAll(".confirm-btn")
             .forEach((btn, epiIndex) => {
@@ -370,7 +524,6 @@
                   if (!gridItems[i].classList.contains("marked")) {
                     gridItems[i].classList.add("marked");
                     gridItems[i].textContent = "X";
-                    // Salva a marcação no localStorage
                     saveMarkedPositions(employee.name, epiIndex, i);
                     break;
                   }
@@ -383,7 +536,7 @@
               });
             });
 
-          // Botão Apagar funcionário
+          // APAGAR registro
           newEmployee
             .querySelector(".delete-btn")
             .addEventListener("click", function () {
@@ -394,7 +547,7 @@
               );
               saveEmployees(updatedEmployees);
 
-              // Remove marcações do funcionário em localStorage
+              // Remove marcações do funcionário
               const markedPositions =
                 JSON.parse(localStorage.getItem("markedPositions")) || {};
               delete markedPositions[employee.name];
@@ -405,9 +558,33 @@
 
               newEmployee.remove();
             });
+
+          // EDITAR registro
+          newEmployee
+            .querySelector(".edit-btn")
+            .addEventListener("click", function () {
+              editEmployee(employee, newEmployee);
+            });
+
+          // Botões de status (Em Uso / Na Lavanderia)
+          newEmployee
+            .querySelectorAll(".status-btn")
+            .forEach((statusButton) => {
+              statusButton.addEventListener("click", function () {
+                const epiStatus = this.closest(
+                  ".epi-status-container"
+                ).querySelector(".epi-status");
+                const type = this.dataset.status;
+                if (type === "emUso") {
+                  epiStatus.textContent = "Status: Em Uso";
+                } else {
+                  epiStatus.textContent = "Status: Na Lavanderia";
+                }
+              });
+            });
         }
 
-        // Botão de adicionar mais EPIs
+        // Adicionar mais EPIs no formulário
         document
           .getElementById("addEpiBtn")
           .addEventListener("click", function () {
@@ -424,7 +601,7 @@
           `;
             epiFields.appendChild(newEpiField);
 
-            // Botão de deletar EPI
+            // Deletar EPI recém criado
             newEpiField
               .querySelector(".delete-epi-btn")
               .addEventListener("click", function () {
@@ -432,7 +609,7 @@
               });
           });
 
-        // Deletar EPI do formulário
+        // Deletar EPI do formulário (já existentes)
         document
           .getElementById("epiFields")
           .addEventListener("click", function (event) {
@@ -441,14 +618,16 @@
             }
           });
 
-        // Botão de adicionar novo funcionário
+        // Adicionar novo funcionário
         document
           .getElementById("addEmployeeBtn")
           .addEventListener("click", function () {
             const employeeName = document.getElementById("employeeName").value;
             const person = document.getElementById("person").value;
+            const numeroCA = document.getElementById("numeroCA").value;
             const epiInputs = epiFields.querySelectorAll("input[type='text']");
             const epis = Array.from(epiInputs).reduce((acc, input, index) => {
+              // Cada EPI: index par (EPI Number), index ímpar (EPI Size)
               if (index % 2 === 0) {
                 acc.push({ number: input.value });
               } else {
@@ -460,6 +639,7 @@
             if (
               employeeName &&
               person &&
+              numeroCA &&
               epis.every((epi) => epi.number && epi.size)
             ) {
               const employees =
@@ -473,7 +653,12 @@
                 return;
               }
 
-              const newEmployee = { name: employeeName, person, epis };
+              const newEmployee = {
+                name: employeeName,
+                person,
+                numeroCA,
+                epis,
+              };
               addEmployeeToDOM(newEmployee);
 
               employees.push(newEmployee);
@@ -482,28 +667,33 @@
               // Limpa os campos
               document.getElementById("employeeName").value = "";
               document.getElementById("person").value = "";
+              document.getElementById("numeroCA").value = "";
               epiFields.innerHTML = `
-                <div class="epi-field">
-                  <label for="epi1">EPI 1</label>
-                  <input type="text" id="epi1" placeholder="Número do EPI 1" />
-                  <label for="epi1Size">Tamanho do EPI 1</label>
-                  <input type="text" id="epi1Size" placeholder="Tamanho do EPI 1" />
-                  <button class="delete-epi-btn">Deletar</button>
-                </div>
-                <div class="epi-field">
-                  <label for="epi2">EPI 2</label>
-                  <input type="text" id="epi2" placeholder="Número do EPI 2" />
-                  <label for="epi2Size">Tamanho do EPI 2</label>
-                  <input type="text" id="epi2Size" placeholder="Tamanho do EPI 2" />
-                  <button class="delete-epi-btn">Deletar</button>
-                </div>
-              `;
+              <div class="epi-field">
+                <label for="epi1">EPI 1</label>
+                <input type="text" id="epi1" placeholder="Número do EPI 1" />
+                <label for="epi1Size">Tamanho do EPI 1</label>
+                <input type="text" id="epi1Size" placeholder="Tamanho do EPI 1" />
+                <button class="delete-epi-btn">Deletar</button>
+              </div>
+              <div class="epi-field">
+                <label for="epi2">EPI 2</label>
+                <input type="text" id="epi2" placeholder="Número do EPI 2" />
+                <label for="epi2Size">Tamanho do EPI 2</label>
+                <input type="text" id="epi2Size" placeholder="Tamanho do EPI 2" />
+                <button class="delete-epi-btn">Deletar</button>
+              </div>
+            `;
+              signaturePreview.src = "";
+              signaturePreview.style.display = "none";
+              signatureFile.value = "";
+              signatureTextOutput.value = "";
             } else {
-              alert("Por favor, preencha todos os campos corretamente.");
+              alert("Por favor, preencha todos os campos e EPIs corretamente.");
             }
           });
 
-        // Mostrar ou esconder membros de uma base
+        // Mostrar ou esconder membros de cada base
         document.querySelectorAll(".person-group h2").forEach((header) => {
           header.addEventListener("click", function () {
             const teamList = this.nextElementSibling;
@@ -512,7 +702,7 @@
           });
         });
 
-        // Carrega registros já salvos
+        // Carrega registros ao iniciar
         loadEmployees();
       });
     </script>
