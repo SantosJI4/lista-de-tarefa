@@ -4,11 +4,171 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="main.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css"
-    />
     <title>Lista de Tarefas</title>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        padding: 20px;
+      }
+
+      header {
+        background: #007bff;
+        color: white;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        position: relative;
+      }
+
+      .menu-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .popup-menu {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .filter-options {
+        margin-bottom: 20px;
+      }
+
+      .filter-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .filter-btn:hover {
+        background: #0056b3;
+      }
+
+      .menu-action-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .menu-action-btn:hover {
+        background: #c82333;
+      }
+
+      .lista {
+        margin-top: 20px;
+      }
+
+      .prefix-select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .task-group {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      .task-group h2 {
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        margin: 0;
+        transition: background 0.3s;
+      }
+
+      .task-group h2:hover {
+        background: #0056b3;
+      }
+
+      .task-list {
+        display: none;
+        padding: 10px;
+        background: #f8f9fa;
+      }
+
+      .task-item {
+        background: #fff;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .task-item span {
+        display: block;
+        margin-right: 10px;
+      }
+
+      .delete-task-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+
+      .delete-task-btn:hover {
+        background: #c82333;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -21,13 +181,13 @@
           <h3>Filtrar por:</h3>
           <div class="filter-options">
             <button class="filter-btn" data-filter="all">Todas</button>
-            <button class="filter-btn" data-filter="urgente">Montana</button>
-            <button class="filter-btn" data-filter="importante">Santana</button>
-            <button class="filter-btn" data-filter="normal">Vitória</button>
-            <button class="filter-btn" data-filter="b-area-santana">
+            <button class="filter-btn" data-filter="Montana">Montana</button>
+            <button class="filter-btn" data-filter="Santana">Santana</button>
+            <button class="filter-btn" data-filter="Vitória">Vitória</button>
+            <button class="filter-btn" data-filter="B. Area Santana">
               B. Area Santana
             </button>
-            <button class="filter-btn" data-filter="b-area-vitoria">
+            <button class="filter-btn" data-filter="B. Area Vitória">
               B. Area Vitória
             </button>
           </div>
@@ -38,49 +198,212 @@
       </div>
       <div class="lista">
         <select id="prioritySelect" class="prefix-select">
-          <option value="">Selecione a prioridade</option>
-          <option value="Montana:">Montana</option>
-          <option value="Santana:">Santana</option>
-          <option value="Vitória:">Vitória</option>
-          <option value="B. AREA SANTANA:">B. Area Santana</option>
-          <option value="B. AREA VITORIA:">B. Area Vitória</option>
+          <option value="">Selecione a sede</option>
+          <option value="Montana">Montana</option>
+          <option value="Santana">Santana</option>
+          <option value="Vitória">Vitória</option>
+          <option value="B. Area Santana">B. Area Santana</option>
+          <option value="B. Area Vitória">B. Area Vitória</option>
         </select>
 
-        <select id="peopleSelect" class="prefix-select">
-          <option value="">Selecione uma pessoa</option>
-          <optgroup label="Montana" class="group-Montana">
-            <option value="FABIO:">Fabio</option>
-            <option value="ANTONIO:">Antonio</option>
-          </optgroup>
-          <optgroup label="Santana" class="group-Santana">
-            <option value="JARDEL:">Jardel</option>
-            <option value="ARLLOS:">Arllos</option>
-          </optgroup>
-          <optgroup label="Vitória" class="group-Vitória">
-            <option value="ALMEIDAS:">Almeidas</option>
-          </optgroup>
-          <optgroup label="B. Area Santana" class="group-b-area-santana">
-            <option value="CASTRO:">Castro</option>
-          </optgroup>
-          <optgroup label="B. Area Vitória" class="group-b-area-vitoria">
-            <option value="JOÃO VITOR:">João Vitor</option>
-          </optgroup>
+        <select id="personSelect" class="prefix-select">
+          <option value="">Selecione o chefe</option>
+          <option value="Fabio">Fabio</option>
+          <option value="Antonio">Antonio</option>
+          <option value="Jardel">Jardel</option>
+          <option value="Arllos">Arllos</option>
+          <option value="Almeidas">Almeidas</option>
+          <option value="Castro">Castro</option>
+          <option value="João Vitor">João Vitor</option>
         </select>
-        <input
-          type="text"
-          id="tarefaInput"
-          placeholder="Apenas números e vírgulas: 1,2,3"
-          pattern="[0-9,\s]*"
-        />
+
+        <select id="employeeSelect" class="prefix-select">
+          <option value="">Nome do Funcionário</option>
+        </select>
+
+        <select id="epiSelect" class="prefix-select" disabled>
+          <option value="">Número do EPI (Tamanho)</option>
+        </select>
+
         <button id="tarefa-btn">Adicionar</button>
         <button id="collectByDateBtn">Recolher por Data</button>
       </div>
-      <ul id="tarefa-List"></ul>
+      <div id="taskGroupsContainer"></div>
       <footer>
         <button id="clearAll">Limpar Tudo</button>
+        <button id="irepis">
+          <a href="ficha_de_epis.html">Ir para Ficha de EPIs</a>
+        </button>
       </footer>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="main.js"></script>
+    <script>
+      $(document).ready(function () {
+        carregarTarefas();
+        setupEventListeners();
+
+        function setupEventListeners() {
+          $("#menuButton").on("click", function () {
+            $("#popupMenu").fadeIn();
+          });
+
+          $("#closeMenu").on("click", function () {
+            $("#popupMenu").fadeOut();
+          });
+
+          $("#prioritySelect").on("change", carregarFuncionarios);
+          $("#personSelect").on("change", carregarFuncionarios);
+
+          $("#employeeSelect").on("change", function () {
+            const selectedEmployeeName = $(this).val();
+            const employees =
+              JSON.parse(localStorage.getItem("employees")) || [];
+            const selectedEmployee = employees.find(
+              (emp) => emp.name === selectedEmployeeName
+            );
+
+            const epiSelect = $("#epiSelect");
+            epiSelect.empty();
+            epiSelect.append(
+              '<option value="">Número do EPI (Tamanho)</option>'
+            );
+
+            if (selectedEmployee) {
+              epiSelect.prop("disabled", false);
+              selectedEmployee.epis.forEach((epi) => {
+                const epiOption = `<option value="${epi.number}">${epi.number} (${epi.size})</option>`;
+                epiSelect.append(epiOption);
+              });
+            } else {
+              epiSelect.prop("disabled", true);
+            }
+          });
+
+          $("#tarefa-btn").on("click", function (e) {
+            e.preventDefault();
+            handleAddTask();
+          });
+
+          $("#clearAllBtn, #clearAll").on("click", handleClearAllTasks);
+
+          $(document).on("click", ".task-group h2", function () {
+            const taskList = $(this).next(".task-list");
+            taskList.toggle();
+          });
+        }
+
+        function handleAddTask() {
+          const priority = $("#prioritySelect").val();
+          const person = $("#employeeSelect").val();
+          const epi = $("#epiSelect").val();
+          const date = new Date().toLocaleDateString();
+
+          if (priority && person && epi) {
+            const task = { priority, person, epi, date };
+            addTaskToList(task);
+            saveTaskToLocalStorage(task);
+            clearInputs();
+          } else {
+            alert("Por favor, preencha todos os campos.");
+          }
+        }
+
+        function addTaskToList(task) {
+          const taskGroup = $(`#taskGroup-${task.date.replace(/\//g, "-")}`);
+          const taskHTML = `
+            <div class="task-item">
+              <span>sede: ${task.priority}</span>
+              <span>Funcionário: ${task.person}</span>
+              <span>EPI: ${task.epi}</span>
+              <button class="delete-task-btn">Deletar</button>
+            </div>
+          `;
+
+          if (taskGroup.length === 0) {
+            const newTaskGroup = `
+              <div class="task-group" id="taskGroup-${task.date.replace(
+                /\//g,
+                "-"
+              )}">
+                <h2>${task.date}</h2>
+                <div class="task-list">${taskHTML}</div>
+              </div>
+            `;
+            $("#taskGroupsContainer").append(newTaskGroup);
+          } else {
+            taskGroup.find(".task-list").append(taskHTML);
+          }
+
+          $(".delete-task-btn")
+            .last()
+            .on("click", function () {
+              const taskItem = $(this).closest(".task-item");
+              const taskDate = taskItem
+                .closest(".task-group")
+                .attr("id")
+                .replace("taskGroup-", "")
+                .replace(/-/g, "/");
+              const taskIndex = taskItem.index();
+              taskItem.remove();
+              removeTaskFromLocalStorage(taskDate, taskIndex);
+            });
+        }
+
+        function saveTaskToLocalStorage(task) {
+          let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+          tasks.push(task);
+          localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function removeTaskFromLocalStorage(date, index) {
+          let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+          const taskIndex = tasks.findIndex(
+            (task) => task.date === date && tasks.indexOf(task) === index
+          );
+          if (taskIndex > -1) {
+            tasks.splice(taskIndex, 1);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+          }
+        }
+
+        function carregarTarefas() {
+          const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+          tasks.forEach(addTaskToList);
+        }
+
+        function carregarFuncionarios() {
+          const employees = JSON.parse(localStorage.getItem("employees")) || [];
+          const person = $("#personSelect").val();
+          const employeeSelect = $("#employeeSelect");
+
+          employeeSelect.empty();
+          employeeSelect.append(
+            '<option value="">Nome do Funcionário</option>'
+          );
+
+          employees.forEach((employee) => {
+            if (employee.person === person) {
+              const option = `<option value="${employee.name}">${employee.name}</option>`;
+              employeeSelect.append(option);
+            }
+          });
+        }
+
+        function handleClearAllTasks() {
+          if (confirm("Tem certeza que deseja limpar todas as tarefas?")) {
+            $("#taskGroupsContainer").empty();
+            localStorage.removeItem("tasks");
+          }
+        }
+
+        function clearInputs() {
+          $("#prioritySelect").val("");
+          $("#personSelect").val("");
+          $("#employeeSelect").val("");
+          $("#epiSelect").val("");
+          $("#epiSelect").prop("disabled", true);
+        }
+      });
+    </script>
   </body>
 </html>

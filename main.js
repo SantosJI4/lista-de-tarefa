@@ -244,8 +244,8 @@ $(document).ready(function () {
       "Montana:": "ATM",
       "Santana:": "ATS",
       "Vitória:": "ATV",
-      "B. AREA SANTANA:": "B. AREA SANTANA",
-      "B. AREA VITORIA:": "B. AREA VITORIA",
+      "B. AREA SANTANA:": "ASA",
+      "B. AREA VITORIA:": "AVA",
     };
     return prefixMap[priority] || "";
   }

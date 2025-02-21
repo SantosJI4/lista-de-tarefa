@@ -20,6 +20,15 @@ body {
 .complete-btn {
 }
 
+#irepis {
+  background: #007bff;
+  color: white;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 header {
   background: #007bff;
   color: white;

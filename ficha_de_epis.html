@@ -1,0 +1,520 @@
+----html
+<!-- filepath: /c:/Users/Maurício Santana/Documents/listadetareafa/ficha_de_epis.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ficha de EPIs</title>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+      header {
+        background: #007bff;
+        color: white;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+      }
+      .person-group {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .person-group h2 {
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        margin: 0;
+      }
+      .person-group .team-list {
+        display: none;
+        padding: 10px;
+        background: #f8f9fa;
+      }
+      .employee-item {
+        background: #fff;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .employee-item h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .employee-item ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+      }
+      .employee-item ul li {
+        margin: 5px 0;
+      }
+      .grid-container {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 5px;
+        margin-top: 10px;
+      }
+      .grid-item {
+        background: #e0e0e0;
+        border: 1px solid #ccc;
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .grid-item.marked {
+        background: #dc3545;
+        color: white;
+        font-weight: bold;
+      }
+      .questionnaire {
+        margin-top: 20px;
+      }
+      .questionnaire h3 {
+        margin-bottom: 10px;
+      }
+      .questionnaire label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+      .questionnaire input[type="checkbox"] {
+        margin-right: 10px;
+      }
+      .confirm-btn,
+      .delete-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .confirm-btn:hover,
+      .delete-btn:hover {
+        background: #0056b3;
+      }
+      .delete-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #dc3545;
+      }
+      .delete-btn:hover {
+        background: #c82333;
+      }
+      .add-employee-form {
+        margin-top: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .add-employee-form h3 {
+        margin-bottom: 10px;
+      }
+      .add-employee-form label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+      .add-employee-form input[type="text"],
+      .add-employee-form select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .add-epi-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .add-epi-btn:hover {
+        background: #218838;
+      }
+      .delete-epi-btn {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .delete-epi-btn:hover {
+        background: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>Ficha de EPIs</header>
+      <div class="person-group" data-person="Fabio">
+        <h2>Fabio</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="person-group" data-person="Antonio">
+        <h2>Antonio</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="person-group" data-person="Jardel">
+        <h2>Jardel</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="person-group" data-person="Arllos">
+        <h2>Arllos</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="person-group" data-person="Almeidas">
+        <h2>Almeidas</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="person-group" data-person="Castro">
+        <h2>Castro</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="person-group" data-person="João Vitor">
+        <h2>João Vitor</h2>
+        <div class="team-list"></div>
+      </div>
+      <div class="add-employee-form">
+        <h3>Adicionar Novo Funcionário</h3>
+        <label for="employeeName">Nome do Funcionário</label>
+        <input
+          type="text"
+          id="employeeName"
+          placeholder="Nome do Funcionário"
+        />
+        <label for="person">Chefe de Base</label>
+        <select id="person">
+          <option value="">Selecione uma pessoa</option>
+          <optgroup label="Montana">
+            <option value="Fabio">Fabio</option>
+            <option value="Antonio">Antonio</option>
+          </optgroup>
+          <optgroup label="Santana">
+            <option value="Jardel">Jardel</option>
+            <option value="Arllos">Arllos</option>
+          </optgroup>
+          <optgroup label="Vitória">
+            <option value="Almeidas">Almeidas</option>
+          </optgroup>
+          <optgroup label="B. Area Santana">
+            <option value="Castro">Castro</option>
+          </optgroup>
+          <optgroup label="B. Area Vitória">
+            <option value="João Vitor">João Vitor</option>
+          </optgroup>
+        </select>
+        <div id="epiFields">
+          <div class="epi-field">
+            <label for="epi1">EPI 1</label>
+            <input type="text" id="epi1" placeholder="Número do EPI 1" />
+            <label for="epi1Size">Tamanho do EPI 1</label>
+            <input type="text" id="epi1Size" placeholder="Tamanho do EPI 1" />
+            <button class="delete-epi-btn">Deletar</button>
+          </div>
+          <div class="epi-field">
+            <label for="epi2">EPI 2</label>
+            <input type="text" id="epi2" placeholder="Número do EPI 2" />
+            <label for="epi2Size">Tamanho do EPI 2</label>
+            <input type="text" id="epi2Size" placeholder="Tamanho do EPI 2" />
+            <button class="delete-epi-btn">Deletar</button>
+          </div>
+        </div>
+        <button id="addEpiBtn" class="add-epi-btn">Adicionar EPI</button>
+        <button id="addEmployeeBtn">Adicionar Funcionário</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const epiFields = document.getElementById("epiFields");
+
+        function loadEmployees() {
+          const employees = JSON.parse(localStorage.getItem("employees")) || [];
+          employees.forEach((employee) => {
+            addEmployeeToDOM(employee);
+          });
+        }
+
+        function saveEmployees(employees) {
+          localStorage.setItem("employees", JSON.stringify(employees));
+        }
+
+        // Funções para salvar e carregar as posições marcadas
+        function saveMarkedPositions(employeeName, epiIndex, position) {
+          const markedPositions =
+            JSON.parse(localStorage.getItem("markedPositions")) || {};
+          if (!markedPositions[employeeName]) {
+            markedPositions[employeeName] = {};
+          }
+          if (!markedPositions[employeeName][epiIndex]) {
+            markedPositions[employeeName][epiIndex] = [];
+          }
+          markedPositions[employeeName][epiIndex].push(position);
+          localStorage.setItem(
+            "markedPositions",
+            JSON.stringify(markedPositions)
+          );
+        }
+
+        function loadMarkedPositions(employee) {
+          const markedPositions =
+            JSON.parse(localStorage.getItem("markedPositions")) || {};
+          return markedPositions[employee.name] || {};
+        }
+
+        function addEmployeeToDOM(employee) {
+          const personGroup = document.querySelector(
+            `.person-group[data-person="${employee.person}"] .team-list`
+          );
+          if (!personGroup) return;
+
+          const markedPositions = loadMarkedPositions(employee);
+
+          const newEmployee = document.createElement("div");
+          newEmployee.classList.add("employee-item");
+          newEmployee.setAttribute("data-employee", employee.name);
+          newEmployee.innerHTML = `
+            <h3>${employee.name}</h3>
+            <ul>
+              ${employee.epis
+                .map(
+                  (epi, index) =>
+                    `<li>EPI ${index + 1}: ${epi.number} (Tamanho: ${
+                      epi.size
+                    })</li>`
+                )
+                .join("")}
+            </ul>
+            ${employee.epis
+              .map(
+                (epi, index) => `
+                  <div class="epi-group">
+                    <h4>EPI ${index + 1}: ${epi.number} (Tamanho: ${
+                  epi.size
+                })</h4>
+                    <div class="grid-container">
+                      ${Array.from({ length: 60 }, (_, i) => {
+                        const isMarked = markedPositions[index]?.includes(i);
+                        return `
+                          <div class="grid-item ${isMarked ? "marked" : ""}">
+                            ${isMarked ? "X" : i + 1}
+                          </div>`;
+                      }).join("")}
+                    </div>
+                    <div class="questionnaire">
+                      <h3>Questionário</h3>
+                      <label>
+                        <input type="checkbox" class="questionnaire-checkbox" /> Fez o teste de hidrorepelência?
+                      </label>
+                      <label>
+                        <input type="checkbox" class="questionnaire-checkbox" /> Virou se tinha algum rasgo?
+                      </label>
+                      <button class="confirm-btn">Confirmar</button>
+                    </div>
+                  </div>
+                `
+              )
+              .join("")}
+            <button class="delete-btn">Apagar</button>
+          `;
+          personGroup.appendChild(newEmployee);
+
+          // Evento de clique do botão Confirmar
+          newEmployee
+            .querySelectorAll(".confirm-btn")
+            .forEach((btn, epiIndex) => {
+              btn.addEventListener("click", function () {
+                const checkboxes = this.closest(".epi-group").querySelectorAll(
+                  ".questionnaire-checkbox"
+                );
+                const allChecked = Array.from(checkboxes).every(
+                  (checkbox) => checkbox.checked
+                );
+
+                if (!allChecked) {
+                  alert(
+                    "Por favor, marque todas as opções antes de confirmar."
+                  );
+                  return;
+                }
+
+                const gridItems =
+                  this.closest(".epi-group").querySelectorAll(".grid-item");
+                for (let i = 0; i < gridItems.length; i++) {
+                  if (!gridItems[i].classList.contains("marked")) {
+                    gridItems[i].classList.add("marked");
+                    gridItems[i].textContent = "X";
+                    // Salva a marcação no localStorage
+                    saveMarkedPositions(employee.name, epiIndex, i);
+                    break;
+                  }
+                }
+
+                // Reset dos checkboxes
+                setTimeout(() => {
+                  checkboxes.forEach((checkbox) => (checkbox.checked = false));
+                }, 1000);
+              });
+            });
+
+          // Botão Apagar funcionário
+          newEmployee
+            .querySelector(".delete-btn")
+            .addEventListener("click", function () {
+              const employees =
+                JSON.parse(localStorage.getItem("employees")) || [];
+              const updatedEmployees = employees.filter(
+                (emp) => emp.name !== employee.name
+              );
+              saveEmployees(updatedEmployees);
+
+              // Remove marcações do funcionário em localStorage
+              const markedPositions =
+                JSON.parse(localStorage.getItem("markedPositions")) || {};
+              delete markedPositions[employee.name];
+              localStorage.setItem(
+                "markedPositions",
+                JSON.stringify(markedPositions)
+              );
+
+              newEmployee.remove();
+            });
+        }
+
+        // Botão de adicionar mais EPIs
+        document
+          .getElementById("addEpiBtn")
+          .addEventListener("click", function () {
+            const epiCount =
+              epiFields.querySelectorAll(".epi-field").length + 1;
+            const newEpiField = document.createElement("div");
+            newEpiField.classList.add("epi-field");
+            newEpiField.innerHTML = `
+            <label for="epi${epiCount}">EPI ${epiCount}</label>
+            <input type="text" id="epi${epiCount}" placeholder="Número do EPI ${epiCount}" />
+            <label for="epi${epiCount}Size">Tamanho do EPI ${epiCount}</label>
+            <input type="text" id="epi${epiCount}Size" placeholder="Tamanho do EPI ${epiCount}" />
+            <button class="delete-epi-btn">Deletar</button>
+          `;
+            epiFields.appendChild(newEpiField);
+
+            // Botão de deletar EPI
+            newEpiField
+              .querySelector(".delete-epi-btn")
+              .addEventListener("click", function () {
+                newEpiField.remove();
+              });
+          });
+
+        // Deletar EPI do formulário
+        document
+          .getElementById("epiFields")
+          .addEventListener("click", function (event) {
+            if (event.target.classList.contains("delete-epi-btn")) {
+              event.target.parentElement.remove();
+            }
+          });
+
+        // Botão de adicionar novo funcionário
+        document
+          .getElementById("addEmployeeBtn")
+          .addEventListener("click", function () {
+            const employeeName = document.getElementById("employeeName").value;
+            const person = document.getElementById("person").value;
+            const epiInputs = epiFields.querySelectorAll("input[type='text']");
+            const epis = Array.from(epiInputs).reduce((acc, input, index) => {
+              if (index % 2 === 0) {
+                acc.push({ number: input.value });
+              } else {
+                acc[acc.length - 1].size = input.value;
+              }
+              return acc;
+            }, []);
+
+            if (
+              employeeName &&
+              person &&
+              epis.every((epi) => epi.number && epi.size)
+            ) {
+              const employees =
+                JSON.parse(localStorage.getItem("employees")) || [];
+              const employeeExists = employees.some(
+                (emp) => emp.name === employeeName
+              );
+
+              if (employeeExists) {
+                alert("Já existe um funcionário com esse nome.");
+                return;
+              }
+
+              const newEmployee = { name: employeeName, person, epis };
+              addEmployeeToDOM(newEmployee);
+
+              employees.push(newEmployee);
+              saveEmployees(employees);
+
+              // Limpa os campos
+              document.getElementById("employeeName").value = "";
+              document.getElementById("person").value = "";
+              epiFields.innerHTML = `
+                <div class="epi-field">
+                  <label for="epi1">EPI 1</label>
+                  <input type="text" id="epi1" placeholder="Número do EPI 1" />
+                  <label for="epi1Size">Tamanho do EPI 1</label>
+                  <input type="text" id="epi1Size" placeholder="Tamanho do EPI 1" />
+                  <button class="delete-epi-btn">Deletar</button>
+                </div>
+                <div class="epi-field">
+                  <label for="epi2">EPI 2</label>
+                  <input type="text" id="epi2" placeholder="Número do EPI 2" />
+                  <label for="epi2Size">Tamanho do EPI 2</label>
+                  <input type="text" id="epi2Size" placeholder="Tamanho do EPI 2" />
+                  <button class="delete-epi-btn">Deletar</button>
+                </div>
+              `;
+            } else {
+              alert("Por favor, preencha todos os campos corretamente.");
+            }
+          });
+
+        // Mostrar ou esconder membros de uma base
+        document.querySelectorAll(".person-group h2").forEach((header) => {
+          header.addEventListener("click", function () {
+            const teamList = this.nextElementSibling;
+            teamList.style.display =
+              teamList.style.display === "none" ? "block" : "none";
+          });
+        });
+
+        // Carrega registros já salvos
+        loadEmployees();
+      });
+    </script>
+  </body>
+</html>
